@@ -1,0 +1,30 @@
+# .github/workflows/cache-demo.yml
+name: Cache Dependencies Demo
+
+on:
+  workflow_dispatch: # Allows manual triggering of the workflow
+
+jobs:
+  cache-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Cache dependencies
+        id: cache-dependencies-step # Assign an ID to this step to reference its outputs
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/pip # Path to cache. This is a common location for Python package caches.
+          key: cache-121712c # The required cache key
+
+      - name: prime-cache-121712c # The required step name
+        run: |
+          if ${{ steps.cache-dependencies-step.outputs.cache-hit == 'true' }}; then
+            echo "Cache hit for key 'cache-121712c'!"
+          else
+            echo "Cache miss for key 'cache-121712c'!"
+            # In a real scenario, you would typically install your dependencies here
+            # if it was a cache miss, e.g., `pip install -r requirements.txt`
+          fi
